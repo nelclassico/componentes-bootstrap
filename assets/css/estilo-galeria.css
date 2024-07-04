@@ -14,186 +14,11 @@ html {
 }
 
 
-/*
-.timeline-line {
-    height: 2px; 
-    background-color: #ccc;
-}
-.timeline-content-container {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 20px; 
-}
-h5.timeline-title-h {
-    text-shadow: 2px 2px 5px #000;
-}
-
-.timeline-container .timeline.bottom .timeline-card:after {
-    border: none;
-    border-top: 5px solid #fff;
-    border-left: 5px solid #fff;
-    bottom: auto;
-    top: 230px;
-    left: auto;
-    right: 50px;
-}
-.timeline-container .timeline-card:after {
-    content: "";
-    width: 20px;
-    height: 20px;
-    background: #ff4747;
-    position: absolute;
-    top: 95px;
-    bottom: 0;
-    left: 52px;
-    transform: rotate(45deg);
-    z-index: 1;
-}
-
-.timeline-card {
-    flex: 0 0 calc(20% - 20px); 
-    margin-right: 20px; 
-    margin-top: 20px;
-    box-shadow: 0 0 20px -10px #000;
-}
 .card-body{
     padding: 0 !important;
 }
-.timeline-date {
-    background-color: #ff4747;
-    color: #fff;
-    padding: 10px;
-    text-align: center;
-}
 
 
-.timeline-container {
-    display: flex;
-    align-items: flex-start; 
-    margin-top: 20px; 
-}
-.timeline-content {
-    padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
-}
-.timeline-item {
-    flex: 1;
-    position: relative;
-}
-
-// Estilo para a linha vertical à direita 
-.timeline-line-right {
-    position: absolute;
-    height: 100%;
-    width: 2px;
-    background-color: #ccc;
-    right: 0;
-    top: 0;
-    z-index: 1;
-}
-
-// Estilo para a timeline em geral 
-.timeline-container {
-    display: flex;
-    align-items: flex-start;
-   //  overflow-x: auto; Adiciona rolagem horizontal quando houver muitos itens 
-}
-.timeline-card .card{
-    width: 350px;
-}
-.timeline-container .timeline-item:nth-child(even) .year {
-    background: #ff4747;
-    color: #ffffff !important;
-}
-.timeline-item .year {
-    display: inline-block;
-    width: 65px;
-    height: 65px;
-    line-height: 85px;
-    color: #fff;
-    background: #dc3545;
-    border-radius: 5px;
-    border: 5px solid #fff;
-    text-align: center;
-    margin-left: 34px;
-    transform: rotate(45deg);
-    position: relative;
-    top: -10px;
-    box-shadow: 0 0 20px -10px #000;
-}
-.timeline-container .year span {
-    display: block;
-    font-size: 20px;
-    font-weight: bold;
-    transform: rotate(-45deg);
-}
-
-.timeline-container .timeline.bottom:after {
-    top: auto;
-    left: auto;
-    bottom: 54%;
-    right: 71px;
-    border-color: #c50606;
-}
-.timeline-container .timeline-item:before {
-    content: "";
-    width: 5px;
-    height: 40px;
-    border-left: 5px dotted #880505;
-    position: absolute;
-    top: 10%;
-    left: 60px;
-}
-.timeline-container .timeline-item:after {
-    content: "";
-    width: 5px;
-    height: 40px;
-    border-left: 5px dotted #880505;
-    position: absolute;
-    top: 10%;
-    left: 60px;
-}
-
-.timeline-item {
-    flex: 0 0 calc(20% - 20px);
-    margin-right: 20px;
-    position: relative;
-}
-
-// Estilo para os títulos 
-.timeline-title {
-    width: 40%;
-    background-color: #fff;
-    text-align: center;
-    padding: 10px;
-    border: 2px solid #ccc;
-    position: relative;
-    z-index: 33;
-    margin-bottom: 15px; // Espaço entre os títulos
-}
-
-// Estilo para as datas e conteúdo 
-.timeline-date, .timeline-content {
-    flex: 1;
-}
-// Estilo para a linha vertical após o título 
-.timeline-horizontal {
-    position: relative;
-    border: solid 1px;
-    width: 100%;
-}
-// Estilo para a linha vertical após o título 
-
-.timeline-title::after {
-    content: "";
-    background-color: black;
-    width: 2px; 
-    height: 50px; 
-    position: absolute;
-    left: -1px;
-    top: -22px;
-    z-index: 1; 
-}
-*/
 .vh-30{
     min-height: 350px;
 }
@@ -216,7 +41,7 @@ h5.timeline-title-h {
   position: absolute;
   content: " ";
   width: 24px;
-  background-color: #ad0101;
+  background-color: #fff;
   left: 50%;
   margin-left: -1.5px;
 }
@@ -264,7 +89,18 @@ h5.timeline-title-h {
   background-color: #8E24AA;
 }
 .timeline .timeline-item .timeline-badge.info {
-  background-color: #8E24AA;
+    background-color: #e5e5e5;
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    border: #fff solid 10px;
 }
 .timeline .timeline-item .timeline-panel {
   position: relative;
@@ -306,7 +142,7 @@ h5.timeline-title-h {
   border: none !important;
 }
 .timeline-horizontal:before {
-  height: 3px;
+  height: 10px;
   top: auto;
   bottom: 26px;
   left: 32px;
@@ -363,7 +199,7 @@ h5.timeline-title-h {
 p.timeline-the-title {
     color: #000;
     position: relative;
-    top: -30px;
+    top: 10px;
 }
 .container-timeline{
     display:inline-block;
@@ -375,4 +211,47 @@ p.timeline-the-title {
 }
 .timeline-panel {
     background: #eeeeee8c;
+}
+.d-flex.flex-wrap.botoes-linha {
+    position: absolute;
+    bottom: 10px;
+    right: 40px;
+}
+
+.botoes-linha {
+    position: absolute;
+    z-index: 1;
+    left: auto;
+    top: 95%;
+    height: 2px;
+    background-color: #f7f7f7;
+    transition: -webkit-transform 0.4s;
+    transition: transform 0.4s;
+    transition: transform 0.4s, -webkit-transform 0.4s;
+}
+.botoes-linha button.carousel-control-next {
+    background: #000;
+    left: 100%;
+    border-radius: 50%;
+    width: 25px;
+    padding: 5px;
+}
+.botoes-linha button.carousel-control-prev {
+    background: #000;
+    right: 100%;
+    border-radius: 50%;
+    width: 25px;
+    padding: 5px;
+    margin-right: 17px;
+    left: -30px;
+}
+.carousel-botoes .timeline-link {
+    position: relative;
+    margin: 5px;
+}
+.timeline-link.above {
+    transform: translateY(-20px);
+}
+.timeline-link.below {
+    transform: translateY(20px);
 }

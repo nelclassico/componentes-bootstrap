@@ -1,81 +1,119 @@
 <?php
 /*
-Plugin Name: Componentes Bootstrap
+Plugin Name: Componentes Bootstrap 
 Description: Um plugin para criar Galerias Simples ou galerias de Cards.
-Version: 1.0
+Version: 2.1
 Author: Emanoel de Oliveira
 */
 
-
-function bootstrap_enqueue_meus_scripts() {
-    // Check if the Bootstrap 5 CSS already exists
-    if (!wp_style_is('bootstrap')) {
-        // Enqueue the Bootstrap 5 CSS if it doesn't exist
+function comp_bootstrap_scripts() {
+    // Enfileirar Bootstrap CSS somente se ainda não estiver enfileirado
+    if (!wp_style_is('bootstrap_css', 'enqueued')) {
         wp_enqueue_style('bootstrap', plugins_url('assets/bootstrap/css/bootstrap.min.css', __FILE__));
     }
 
-    // Check if the Bootstrap 5 JavaScript already exists
-    if (!wp_script_is('bootstrap')) {
-        // Enqueue the Bootstrap 5 JavaScript if it doesn't exist
+    // Enfileirar Bootstrap JavaScript somente se ainda não estiver enfileirado
+    if (!wp_script_is('bootstrap_js', 'enqueued')) {
         wp_enqueue_script('bootstrap', plugins_url('assets/bootstrap/js/bootstrap.min.js', __FILE__), array('jquery'), '5.3.2', true);
     }
 
-    // Check if your custom CSS already exists
-    if (!wp_style_is('meu-plugin-css')) {
-        // Enqueue your custom CSS if it doesn't exist
-        wp_enqueue_style('meu-plugin-css', plugins_url('assets/css/estilo-galeria.css', __FILE__));
+    // Enfileirar seu CSS personalizado somente se ainda não estiver enfileirado
+    if (!wp_style_is('comp-plugin-css', 'enqueued')) {
+        wp_enqueue_style('comp-plugin-css', plugins_url('assets/css/estilo-galeria.css', __FILE__));
     }
 
-    // Carregando Lightbox
-    if (!wp_style_is('lightbox-css')) {
+    // Enfileirar Lightbox CSS somente se ainda não estiver enfileirado
+    if (!wp_style_is('lightbox-css', 'enqueued')) {
         wp_enqueue_style('lightbox-css', 'https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css');
     }
 
-    if (!wp_script_is('lightbox-js')) {
+    // Enfileirar Lightbox JavaScript somente se ainda não estiver enfileirado
+    if (!wp_script_is('lightbox-js', 'enqueued')) {
         wp_enqueue_script('lightbox-js', 'https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js', array('jquery'), '2.11.3', true);
     }
 
-    // Check if your custom script already exists
-    if (!wp_script_is('timeline-scripts')) {
-        // Enqueue your custom script if it doesn't exist
+    // Enfileirar seus scripts personalizados somente se ainda não estiverem enfileirados
+    if (!wp_script_is('timeline-scripts', 'enqueued')) {
         wp_enqueue_script('timeline-scripts', plugins_url('assets/js/scripts.js', __FILE__), array('jquery'), '1.0', true);
     }
-
 }
 
-add_action('wp_enqueue_scripts', 'bootstrap_enqueue_meus_scripts');
-
-
+add_action('wp_enqueue_scripts', 'comp_bootstrap_scripts');
 
 function enqueue_metabox_styles() {
-    $metabox_styles_path = get_template_directory() . 'assets/css/metabox-styles.css';
+    $metabox_styles_path = get_template_directory() . '/assets/css/metabox-styles.css';
 
-    // Verifique se o arquivo CSS existe
-    if (file_exists(wp_normalize_path($metabox_styles_path)) && !wp_style_is('metabox-styles')) {
-        // Ajuste a prioridade de enfileiramento se necessário
+    // Verificar se o arquivo CSS existe e ainda não está enfileirado
+    if (file_exists($metabox_styles_path) && !wp_style_is('metabox-styles', 'enqueued')) {
         wp_enqueue_style('metabox-styles', get_template_directory_uri() . '/assets/css/metabox-styles.css', array(), '1.0.0', 'all');
-    } elseif (!file_exists(wp_normalize_path($metabox_styles_path))) {
+    } else {
         // Adicione algum tipo de mensagem de erro ou log para identificar o problema
         error_log('Erro: O arquivo metabox-styles.css não foi encontrado em ' . $metabox_styles_path);
     }
 }
 
-add_action('admin_enqueue_scripts', 'enqueue_metabox_styles', 1000); // Ajuste a prioridade aqui
+add_action('admin_enqueue_scripts', 'enqueue_metabox_styles');
 
 add_action('rwmb_enqueue_scripts', function() {
-    // Corrija a URL do estilo no rwmb_enqueue_scripts
-    if (!wp_style_is('custom-meta-box-style')) {
+    if (!wp_style_is('custom-meta-box-style', 'enqueued')) {
         wp_enqueue_style('custom-meta-box-style', get_stylesheet_directory_uri() . '/assets/css/metabox-styles.css');
     }
 });
 
 
-// Registrar o Custom Post Type "Galeria Simples"
-function registrar_post_type_galeria_simples() {
+function componentes_bootstrap() {
+    // Adiciona o menu principal "Componentes Bootstrap"
+    add_menu_page(
+        'Componentes Bootstrap', // Título da página
+        'Componentes Bootstrap', // Título do menu
+        'manage_options', // Capacidade necessária para ver este menu
+        'componentes_bootstrap_menu', // Slug do menu
+        'componentes_bootstrap_main_page', // Função que mostra o conteúdo da página do menu
+        'dashicons-calendar-alt', // Ícone
+        20 // Posição no menu
+    );
+
+    // Submenu para Card Simples
+    add_submenu_page(
+        'componentes_bootstrap_menu', // Slug do menu pai
+        'GCard Simples', // Título da página
+        'GCard Simples', // Título do menu
+        'manage_options', // Capacidade necessária
+        'edit.php?post_type=gcard-simples' // Slug do Custom Post Type
+    );
+
+    // Adicione outros submenus da mesma forma
+    add_submenu_page(
+        'componentes_bootstrap_menu',
+        'NGalerias',
+        'NGalerias',
+        'manage_options',
+        'edit.php?post_type=ngalerias' // Certifique-se de que 'ngalerias' é o slug correto do Custom Post Type
+    );
+
+    add_submenu_page(
+        'componentes_bootstrap_menu',
+        'Linha do Tempo',
+        'Linha do Tempo',
+        'manage_options',
+        'edit.php?post_type=linha-tempo' // Certifique-se de que 'linha-do-tempo' é o slug correto do Custom Post Type
+    );
+}
+
+add_action('admin_menu', 'componentes_bootstrap');
+
+function componentes_bootstrap_main_page() {
+    echo '<h1>Bem-vindo aos Componentes Bootstrap</h1>';
+    echo '<p>Selecione uma opção do menu para começar.</p>';
+}
+
+
+
+// Registrar o Custom Post Type "Card Simples"
+function registrar_post_type_gcard_simples() {
     $labels = array(
-        'name' => 'Galeria Card Simples',
-        'singular_name' => 'Item da Galeria',
-        'menu_name' => 'Galerias Card',
+        'name' => 'GCard Simples',
+        'singular_name' => 'Item da GCard',        
     );
 
     $args = array(
@@ -85,43 +123,44 @@ function registrar_post_type_galeria_simples() {
         'rewrite' => false,
         'menu_icon' => 'dashicons-book',
         'supports' => array('title', 'thumbnail'), // Adicione suporte para campos personalizados.
-        'menu_position'       => 5, // Mesma posição do menu
+        //'menu_position'       => 5,  Mesma posição do menu
+        'show_in_menu' => false, // Não mostra o Custom Post Type diretamente no menu admin
     );
 
-    register_post_type('galeria-simples', $args);
+    register_post_type('gcard-simples', $args);
 }
 
-add_action('init', 'registrar_post_type_galeria_simples');
+add_action('init', 'registrar_post_type_gcard_simples');
 
 // Adicionar metabox para campos personalizados
-function adicionar_metabox_galeria_simples() {
+function adicionar_metabox_gcard_simples() {
     // Adicione um campo de título
     add_meta_box(
-        'metabox-galeria-simples',
-        'Título da Galeria',
-        'renderizar_metabox_galeria_simples',
-        'galeria-simples',
+        'metabox-gcard-simples',
+        'Título da GCard',
+        'renderizar_metabox_gcard_simples',
+        'gcard-simples',
         'normal',
         'high'
     );
 }
 
-add_action('add_meta_boxes', 'adicionar_metabox_galeria_simples');
+add_action('add_meta_boxes', 'adicionar_metabox_gcard_simples');
 
 // Função para renderizar o metabox
-function renderizar_metabox_galeria_simples($post) {
+function renderizar_metabox_gcard_simples($post) {
     $post_id = $post->ID;
-    $shortcode = get_post_meta($post_id, 'galeria-simples', true);
+    $shortcode = get_post_meta($post_id, 'gcard-simples', true);
 
     if (empty($shortcode)) {
-        $shortcode = '[galeria-simples id="' . $post_id . '"]';
-        update_post_meta($post_id, 'galeria-simples', $shortcode);
+        $shortcode = '[gcard-simples id="' . $post_id . '"]';
+        update_post_meta($post_id, 'gcard-simples', $shortcode);
     }
 
     echo '<p>Shortcode:</p>';
     echo '<input type="text" readonly="readonly" value="' . esc_attr($shortcode) . '" class="large-text" />';
 
-    echo '<p>Título da galeria:</p>';
+    echo '<p>Título do card:</p>';
     echo '<input type="text" name="titulo" value="' . esc_attr(get_post_meta($post->ID, 'titulo', true)) . '" class="large-text" />';
 
     // Adicione o campo de seleção para o número de colunas
@@ -134,32 +173,35 @@ function renderizar_metabox_galeria_simples($post) {
         // Adicione mais opções conforme necessário
         echo '</select>';
 
-    $conteudos = get_post_meta($post_id, 'conteudos-galeria', true);
+    $conteudos = get_post_meta($post_id, 'conteudos-gcard', true);
 
     if (empty($conteudos)) {
         $conteudos = array();
     }
     ?>
 
-    <div id="conteudos-container-galeria">
+    <div id="conteudos-container-gcard">
         <?php foreach ($conteudos as $index => $conteudo): ?>
             <div class="conteudo" style="margin-bottom: 10px;">
                 <label for="titulo_<?php echo $index; ?>">Título:</label><br>
-                <input type="text" name="conteudos-galeria[<?php echo $index; ?>][titulo]" value="<?php echo esc_attr($conteudo['titulo']); ?>" /><br>
+                <input type="text" name="conteudos-gcard[<?php echo $index; ?>][titulo]" value="<?php echo esc_attr($conteudo['titulo']); ?>" /><br>
+
+                <label for="data_<?php echo $index; ?>">Data:</label><br>
+                <input type="text" name="conteudos-gcard[<?php echo $index; ?>][data]" id="data_<?php echo $index; ?>" value="<?php echo esc_attr($conteudo['data']); ?>" /><br>
 
                 <label for="imagem_<?php echo $index; ?>">Imagem:</label><br>
                 <div class="custom-media-uploader">
                     <button type="button" class="button upload-image-button">Selecionar Imagem</button>
-                    <img src="<?php echo esc_attr($conteudo['imagem']); ?>" class="preview-image" style="max-width: 100%; height: auto; display: <?php echo empty($conteudo['imagem']) ? 'none' : 'block'; ?>" />
-                    <input type="hidden" name="conteudos-galeria[<?php echo $index; ?>][imagem]" id="imagem_<?php echo $index; ?>" value="<?php echo esc_attr($conteudo['imagem']); ?>" class="image-url" />
+                    <img src="<?php echo esc_attr($conteudo['imagem']); ?>" class="preview-image" style="max-width: 30%; height: auto; display: <?php echo empty($conteudo['imagem']) ? 'none' : 'block'; ?>" />
+                    <input type="hidden" name="conteudos-gcard[<?php echo $index; ?>][imagem]" id="imagem_<?php echo $index; ?>" value="<?php echo esc_attr($conteudo['imagem']); ?>" class="image-url" />
                 </div><br>
 
 
                 <label for="conteudo_<?php echo $index; ?>">Conteúdo:</label><br>
-                <textarea name="conteudos-galeria[<?php echo $index; ?>][conteudo]" class="wp-editor-area" rows="10" cols="50"><?php echo wp_kses_post($conteudo['conteudo']); ?></textarea><br>
+                <textarea name="conteudos-gcard[<?php echo $index; ?>][conteudo]" class="wp-editor-area" rows="10" cols="50"><?php echo wp_kses_post($conteudo['conteudo']); ?></textarea><br>
 
                 <label for="posicao_<?php echo $index; ?>">Posição:</label><br>
-                <input type="number" name="conteudos-galeria[<?php echo $index; ?>][posicao]" value="<?php echo esc_attr($conteudo['posicao']); ?>" />
+                <input type="number" name="conteudos-gcard[<?php echo $index; ?>][posicao]" value="<?php echo esc_attr($conteudo['posicao']); ?>" />
 
                 <button class="excluir-conteudo button">Excluir</button><br>
                 <hr>
@@ -196,38 +238,41 @@ function renderizar_metabox_galeria_simples($post) {
 
                 // Adicionar novo conteúdo
                 $('#adicionar-conteudo').on('click', function() {
-                    var index = $('#conteudos-container-galeria .conteudo').length;
+                    var index = $('#conteudos-container-gcard .conteudo').length;
 
                     var novoConteudo = `
                         <div class="conteudo" style="margin-bottom: 10px;">
                             <label for="titulo_${index}">Título:</label><br>
-                            <input type="text" name="conteudos-galeria[${index}][titulo]" id="titulo_${index}" /><br>
+                            <input type="text" name="conteudos-gcard[${index}][titulo]" id="titulo_${index}" /><br>
+
+                            <label for="data_${index}">Data:</label><br>
+                            <input type="text" name="conteudos-gcard[${index}][data]" id="data_${index}" /><br>
 
                             <label for="imagem_${index}">Imagem:</label><br>
                             <div class="custom-media-uploader">
                                 <button type="button" class="button upload-image-button">Selecionar Imagem</button>
-                                <img src="" class="preview-image" style="max-width: 100%; height: auto; display: none;" />
-                                <input type="hidden" name="conteudos-galeria[${index}][imagem]" id="imagem_${index}" class="image-url" />
+                                <img src="" class="preview-image" style="max-width: 30%; height: auto; display: none;" />
+                                <input type="hidden" name="conteudos-gcard[${index}][imagem]" id="imagem_${index}" class="image-url" />
                             </div><br>
 
                             <label for="conteudo_${index}">Conteúdo:</label><br>
-                            <textarea name="conteudos-galeria[${index}][conteudo]" class="wp-editor-area" rows="10" cols="50"></textarea><br>
+                            <textarea name="conteudos-gcard[${index}][conteudo]" class="wp-editor-area" rows="10" cols="50"></textarea><br>
 
                             <label for="posicao_${index}">Posição:</label><br>
-                            <input type="number" name="conteudos-galeria[${index}][posicao]" value="${index + 1}" />
+                            <input type="number" name="conteudos-gcard[${index}][posicao]" value="${index + 1}" />
 
                             <button class="excluir-conteudo button">Excluir</button><br>
                             <hr>
                         </div>
                     `;
 
-                    $('#conteudos-container-galeria').append(novoConteudo);
+                    $('#conteudos-container-gcard').append(novoConteudo);
 
                     return false;
                 });
 
                 // Excluir conteúdo existente
-                $('#conteudos-container-galeria').on('click', '.excluir-conteudo', function() {
+                $('#conteudos-container-gcard').on('click', '.excluir-conteudo', function() {
                     if (confirm('Tem certeza de que deseja excluir este item?')) {
                         $(this).closest('.conteudo').remove();
                     }
@@ -241,18 +286,18 @@ function renderizar_metabox_galeria_simples($post) {
 }
 
 // Salvar os dados dos campos personalizados
-function salvar_metabox_galeria_simples($post_id) {
+function salvar_metabox_gcard_simples($post_id) {
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 
-    if (isset($_POST['post_type']) && 'galeria-simples' == $_POST['post_type']) {
+    if (isset($_POST['post_type']) && 'gcard-simples' == $_POST['post_type']) {
         // Salvar o valor do número de colunas
         if (isset($_POST['num_colunas'])) {
             $num_colunas = sanitize_text_field($_POST['num_colunas']);
             update_post_meta($post_id, 'num_colunas', $num_colunas);
         }
 
-        if (isset($_POST['conteudos-galeria'])) {
-            $conteudos = $_POST['conteudos-galeria'];
+        if (isset($_POST['conteudos-gcard'])) {
+            $conteudos = $_POST['conteudos-gcard'];
 
             // Verifique se as posições não foram fornecidas e preencha automaticamente
             if (!empty($conteudos) && is_array($conteudos)) {
@@ -260,6 +305,11 @@ function salvar_metabox_galeria_simples($post_id) {
                     if (empty($conteudo['posicao'])) {
                         $conteudos[$index]['posicao'] = $index + 1;
                     }
+
+                    /* Inclui o tratamento para o campo 'data'
+                    if (!empty($conteudo['data'])) {
+                        $conteudos[$index]['data'] = sanitize_text_field($conteudo['data']);
+                    } */
                 }
             }
 
@@ -267,20 +317,20 @@ function salvar_metabox_galeria_simples($post_id) {
                 return intval($a['posicao']) - intval($b['posicao']);
             });
 
-            update_post_meta($post_id, 'conteudos-galeria', $conteudos);
+            update_post_meta($post_id, 'conteudos-gcard', $conteudos);
         }
 
-        if (isset($_POST['galeria-simples'])) {
-            $shortcode = sanitize_text_field($_POST['galeria-simples']);
-            update_post_meta($post_id, 'galeria-simples', $shortcode);
+        if (isset($_POST['gcard-simples'])) {
+            $shortcode = sanitize_text_field($_POST['gcard-simples']);
+            update_post_meta($post_id, 'gcard-simples', $shortcode);
         }
         
         // Atualizar a imagem com o valor do campo hidden
-        if (isset($_POST['conteudos-galeria'])) {
-            $conteudos = $_POST['conteudos-galeria'];
+        if (isset($_POST['conteudos-gcard'])) {
+            $conteudos = $_POST['conteudos-gcard'];
             foreach ($conteudos as $index => $conteudo) {
                 if (isset($conteudo['imagem'])) {
-                    update_post_meta($post_id, "conteudos-galeria[{$index}][imagem]", sanitize_text_field($conteudo['imagem']));
+                    update_post_meta($post_id, "conteudos-gcard[{$index}][imagem]", sanitize_text_field($conteudo['imagem']));
                 }
             }
         }
@@ -288,11 +338,11 @@ function salvar_metabox_galeria_simples($post_id) {
 }
 
 
-add_action('save_post', 'salvar_metabox_galeria_simples');
+add_action('save_post', 'salvar_metabox_gcard_simples');
 
 
 
-function galeria_simples_shortcode($atts) {
+function gcard_simples_shortcode($atts) {
     if (!isset($atts['id'])) {
         return 'ID da publicação não especificado.';
     }
@@ -300,20 +350,22 @@ function galeria_simples_shortcode($atts) {
     $post_id = $atts['id'];
     $num_colunas = get_post_meta($post_id, 'num_colunas', true);
 
-    $galerias_items = array();
-    $conteudos = get_post_meta($post_id, 'conteudos-galeria', true);
+    $gcard_items = array();
+    $conteudos = get_post_meta($post_id, 'conteudos-gcard', true);
 
     if ($conteudos && is_array($conteudos)) {
         foreach ($conteudos as $conteudo) {
             $imagem = isset($conteudo['imagem']) ? $conteudo['imagem'] : '';
             $title = isset($conteudo['titulo']) ? $conteudo['titulo'] : '';
+            $data = isset($conteudo['data']) ? $conteudo['data'] : '';
             $content = isset($conteudo['conteudo']) ? $conteudo['conteudo'] : '';
 
             if ($imagem && $title && $content) {
-                $galerias_items[] = array(
+                $gcard_items[] = array(
                     'imagem' => $imagem,
                     'content' => $content,
                     'title' => $title,
+                    'data' => $data,
                 );
             }
         }
@@ -324,7 +376,7 @@ function galeria_simples_shortcode($atts) {
     <div id="timelineGallery" class="row mt-5">
     <?php
     $item_count = 0;
-    foreach ($galerias_items as $item):
+    foreach ($gcard_items as $item):
     ?>
         <div class="<?php echo esc_attr($num_colunas); ?>">
             <div class="card mb-4 shadow card-altura">  
@@ -333,6 +385,7 @@ function galeria_simples_shortcode($atts) {
                 </a>
                 <div class="card-body p-3">
                     <h5 class="card-text text-center"><span><?php echo esc_html($item['title']); ?></span></h5>
+                    <p class="card-date text-center"><?php echo esc_html(($item['data'])); ?></p>
                 </div>
             </div>
         </div>
@@ -374,16 +427,9 @@ function galeria_simples_shortcode($atts) {
     return ob_get_clean();
 }
 
-add_shortcode('galeria-simples', 'galeria_simples_shortcode');
-
-
-
-
-
-
+add_shortcode('gcard-simples', 'gcard_simples_shortcode');
 
 /* *****  
-*
 *
 *
 
@@ -391,13 +437,11 @@ Registrar um post type para ngalerias
 
 *
 *
-*
 ****/
 function registrar_post_type_ngalerias() {
     $labels = array(
         'name'               => 'ngalerias',
-        'singular_name'      => 'ngaleria',
-        'menu_name'          => 'Galerias',
+        'singular_name'      => 'ngaleria',        
         'add_new'            => 'Adicionar Nova ngaleria',
         'add_new_item'       => 'Adicionar Nova ngaleria',
         'edit_item'          => 'Editar ngaleria',
@@ -413,7 +457,7 @@ function registrar_post_type_ngalerias() {
         'public'              => true,
         'publicly_queryable'  => true,
         'show_ui'             => true,
-        'show_in_menu'        => true,
+        'show_in_menu'        => false,
         'menu_icon'           => 'dashicons-format-gallery',
         'query_var'           => true,
         'rewrite'             => array('slug' => 'ngalerias'),
@@ -421,7 +465,7 @@ function registrar_post_type_ngalerias() {
         'has_archive'         => true,
         'hierarchical'        => false,
         'supports'            => array('title', 'thumbnail'),
-        'menu_position'       => 5, // Mesma posição do menu
+        // 'menu_position'       => 5,  Mesma posição do menu
     );
 
     register_post_type('ngalerias', $args);
@@ -639,7 +683,7 @@ function ngalerias_shortcode($atts) {
                     echo '<div class="row"> ';
                     foreach ($image_urls as $image_url) {
                         echo '<div class="' . $num_colunas . ' altura-imagens" style="background-image: url(' . $image_url .')">';
-                        echo '<a href="' . $image_url . '" data-lightbox="galeria">';
+                        echo '<a href="' . $image_url . '" data-lightbox="ngaleria">';
                         echo '<img src="' . $image_url . '" alt="' . get_post_meta($post_id, '_wp_attachment_image_alt', true) . '">';
                         echo '</a>';
                         echo '</div>';
@@ -668,7 +712,7 @@ function registrar_post_type_linha() {
     $labels = array(
         'name' => 'Linha do Tempo',
         'singular_name' => 'Item de Linha do Tempo',
-        'menu_name' => 'Linha do Tempo',
+        //'menu_name' => 'Linha do Tempo',
     );
 
     $args = array(
@@ -676,9 +720,10 @@ function registrar_post_type_linha() {
         'public' => true,
         'has_archive' => false,
         'rewrite' => false,
+        'show_in_menu' => false, // Não mostra o Custom Post Type diretamente no menu admin
         'menu_icon' => 'dashicons-image-flip-horizontal',
         'supports' => array('title', 'thumbnail'), // Adicione suporte para campos personalizados.
-        'menu_position'       =>    5, // Mesma posição do menu
+        //'menu_position'       =>    5, // Mesma posição do menu
     );
 
     register_post_type('linha-tempo', $args);
@@ -1025,12 +1070,30 @@ function linha_do_tempo_shortcode($atts) {
                             </li>
                         <?php endforeach; ?>
                     </ul>
-                    <div class="d-flex flex-wrap botoes-linha">
-                        <?php foreach ($timeline_items as $index => $item): ?>
-                            <a href="#timeline-item-<?php echo $index; ?>" class="timeline-link  scroll-link m-1 btn btn-danger">
-                                <?php echo $item['title']; ?>
-                            </a>
-                        <?php endforeach; ?>
+                    <div class="d-flex flex-wrap justify-content-end botoes-linha">
+                        <div id="carouselLine" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner">
+                                <?php
+                                    $chunked_items = array_chunk($timeline_items, 30);
+                                    foreach ($chunked_items as $chunk_index => $chunk): ?>
+                                        <div class="carousel-item <?php echo $chunk_index === 0 ? 'active' : ''; ?>">
+                                            <?php foreach ($chunk as $index => $item): ?>
+                                                <a href="#timeline-item-<?php echo $index + ($chunk_index * 30); ?>" class="timeline-link text-dark scroll-link m-1 <?php echo $index % 2 == 0 ? 'above' : 'below'; ?>">
+                                                    <?php echo $item['title']; ?>
+                                                </a>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endforeach; ?>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselLine" data-bs-slide="prev">
+                               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                               <span class="visually-hidden">Previous</span>
+                             </button>
+                             <button class="carousel-control-next" type="button" data-bs-target="#carouselLine" data-bs-slide="next">
+                               <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                               <span class="visually-hidden">Next</span>
+                             </button>
+                        </div>
                     </div>  
                 </div>
             </div>            
